@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+<body>
+    <div th:fragment="pagination (url)">
+        <nav th:if="${page.totalPages > 1}">
+            <ul class="pagination">
+                <li th:class="${page.content.number == 0} ? 'disabled page-item' : 'page-item'">
+                    <a class="page-link" th:href="@{/{url}/(page=1,url=${url})}">&laquo;</a>
+                </li>
+                <li th:class="${page.content.number == 0} ? 'disabled page-item' : 'page-item'">
+                    <a class="page-link" th:href="@{/{url}/(page=${page.number},url=${url})}">Previous</a>
+                </li>
+                <li th:class="${page.content.number == (pageNumber - 1)} ? 'active page-item' : 'page-item'"
+                    th:each="pageNumber : ${#numbers.sequence(pageList.start, pageList.end)}">
+                    <a class="page-link" th:href="@{/{url}/(page=${pageNumber},url=${url})}" th:text="${pageNumber}"/>
+                </li>
+                <li th:class="${page.content.number == page.totalPages - 1} ? 'disabled page-item' : 'page-item'">
+                    <a class="page-link" th:href="@{/{url}/(page=${page.number+2},url=${url})}">Next</a>
+                </li>
+                <li th:class="${page.content.number == page.totalPages - 1} ? 'disabled page-item' : 'page-item'">
+                    <a class="page-link" th:href="@{/{url}/(page=${page.totalPages},url=${url})}">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
+

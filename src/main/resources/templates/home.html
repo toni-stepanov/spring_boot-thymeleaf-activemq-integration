@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+    <head th:replace="fragments/header :: head-fragment">
+</head>
+
+<body>
+
+<div th:replace="fragments/header :: header">
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Static header</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Home</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div th:if="${currentUser}">
+        <div class="row">
+            <div class="col-4 offset-3 text-center">
+                <h3 class="bg-info" th:text="'Welcome, ' + ${currentUser.user.email}"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-2 offset-10">
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <input type="submit" style="cursor: pointer" class="btn btn-large btn-success" value="Log out" />
+                </form>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div sec:authorize="hasAuthority('ADMIN')" >
+                <a class="btn btn-large btn-primary" href="/users">View all users</a>
+                <a class="btn btn-large btn-primary" href="/task/create">Create a new task</a>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <a class="btn btn-large btn-success" href="/tasks">View all tasks</a>
+        </div>
+    </div>
+
+    <div th:if="!${currentUser}">
+        <div class="row">
+            <div class="col-4">
+                <p th:if="${error}" class="error">Wrong user or password</p>
+                <form th:action="@{/login}" class="form-signin" method="post">
+                    <h2 class="form-signin-heading">Please sign in</h2>
+                    <label for="email" class="sr-only">Email address</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="Email address"
+                           required="" autofocus=""/>
+                    <label for="password" class="sr-only">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                           required=""/>
+                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                </form>
+
+                <br />
+                <h2>Or create new account</h2>
+                <p>
+                    <a href="/signup" th:href="@{/signup}" class="btn btn-large btn-success">Sign up</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer :: footer">&copy; 2017 The Static Templates</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+logging:
+  level:
+       org:
+        springframework: WARN
+        hibernate: WARN
+       com:
+        pp: DEBUG
+spring:
+  profiles:
+    active: "prod"
+  main:
+    banner-mode: "off"
