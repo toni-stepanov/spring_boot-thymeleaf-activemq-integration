@@ -17,7 +17,7 @@ import org.springframework.jms.core.JmsTemplate;
 @SpringBootApplication
 public class TaskManagerApplication extends SpringBootServletInitializer {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(ExceptionHandlerControllerAdvice.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TaskManagerApplication.class);
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(TaskManagerApplication.class, args);

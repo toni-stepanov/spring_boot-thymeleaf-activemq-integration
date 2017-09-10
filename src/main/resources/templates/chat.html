@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/header :: head-fragment">
+</head>
+<body>
+    <div th:replace="fragments/header :: header"/>
+    <div class="container">
+        <div class="row">
+            <h1>Users</h1>
+        </div>
+        <div class="row">
+            <table class="table">
+                <tr>
+                    <th>Id</th>
+                    <th>Role</th>
+                    <th>Email</th>
+                </tr>
+                <tr th:each="user : ${page.content}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td th:text="${user.email}"></td>
+                </tr>
+            </table>
+        </div>
+        <div th:replace="fragments/pagination :: pagination(users)"/>
+        <div th:replace="fragments/footer :: footer">&copy; 2017 The Static Templates</div>
+    </div>
+</body>
+</html>
