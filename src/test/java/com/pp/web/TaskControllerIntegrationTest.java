@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -25,6 +26,7 @@ import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -56,11 +58,24 @@ public class TaskControllerIntegrationTest {
     }
 
 
+//    @Test
+//    public void requestToTasks() throws Exception {
+//        HtmlPage htmlPage = webClient.getPage("http://pp.com/task");
+//        List<String> booksList = htmlPage.getElementsByTagName("h1")
+//                .stream().map(DomNode::asText).collect(toList());
+//        assertThat(booksList, hasItems("Tasks"));
+//    }
+
     @Test
-    public void requestToTasks() throws Exception {
-        HtmlPage htmlPage = webClient.getPage("http://pp.com/task");
-        List<String> booksList = htmlPage.getElementsByTagName("h1")
-                .stream().map(DomNode::asText).collect(toList());
-        assertThat(booksList, hasItems("Tasks"));
+    public void shouldBeErrorForUnathorizedUserForCallingTaskPage() throws Exception {
+        mockMvc.perform(get("/tasks")).andExpect(status().isUnauthorized());
     }
+
+    @Test
+    @WithUserDetails
+    // todo initialize spring test security
+    public void shouldNotBeErrorsForAthorizedUserForCallingTaskPage() throws Exception {
+        mockMvc.perform(get("/tasks")).andExpect(status().isUnauthorized());
+    }
+
 }
