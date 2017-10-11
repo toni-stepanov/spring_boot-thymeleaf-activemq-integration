@@ -4,6 +4,11 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.pp.controller.TaskController;
+import com.pp.controller.advice.CurrentUserControllerAdvice;
+import com.pp.domain.task.Task;
+import com.pp.domain.user.CurrentUser;
+import com.pp.domain.user.Role;
+import com.pp.domain.user.User;
 import com.pp.domain.validator.TaskCreateFormValidator;
 import com.pp.service.TaskService;
 import org.junit.Before;
@@ -12,6 +17,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithSecurityContext;
@@ -25,12 +34,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -50,20 +62,50 @@ public class TaskControllerIntegrationTest {
     private WebApplicationContext context;
     private MockMvc mockMvc;
     private WebClient webClient;
-
-    @MockBean
-    private TaskService taskService;
+    private final int PAGE_NUMBER = 1;
+    private final String PAGE_NUMBER_STRING = "1";
+    private final int PAGE_SIZE = 5;
+    private final String PAGE_SIZE_STRING = "5";
+    private final String SEARCH_TERM = "itl";
+    private Pageable pageRequest;
 
     @MockBean
     private TaskCreateFormValidator formValidator;
+
+    @MockBean
+    private CurrentUserControllerAdvice currentUserControllerAdvice;
+
+    @MockBean
+    private TaskService taskService;
 
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(springSecurity())
             .build();
+        when(taskService.findAllPageable(any())).thenReturn(createEmptyPage());
+        when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createwCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
+    }
+
+    private Page<Task> createEmptyPage() {
+        Task task = new Task();
+        task.setTitle("12");
+        Sort sort = new Sort(Sort.Direction.ASC, "");
+        pageRequest = new PageRequest(PAGE_NUMBER, PAGE_SIZE, sort);
+        Page<Task> emptyPage = new PageBuilder<Task>()
+                .elements(Arrays.asList(task))
+                .pageRequest(pageRequest)
+                .totalElements(0)
+                .build();
+        return emptyPage;
+    }
+
+    private CurrentUser createwCurrentUser() {
+        User user = new User(1L, "test@test.com", "124214", Role.ADMIN, new ArrayList<Task>());
+        CurrentUser currentUser = new CurrentUser(user);
+        return currentUser;
     }
 
     @Test
@@ -72,7 +114,7 @@ public class TaskControllerIntegrationTest {
     }
 
     @Test
-    @WithMockUser(roles={"ADMIN"})
+    @WithMockUser(username="demo@localhost",roles={"USER","ADMIN"})
     public void shouldNotBeErrorsForAthorizedUserForCallingTaskPage() throws Exception {
         mockMvc.perform(get("/tasks")).andExpect(status().isOk());
     }

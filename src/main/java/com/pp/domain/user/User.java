@@ -1,8 +1,8 @@
 package com.pp.domain.user;
 
 import com.pp.domain.task.Task;
-import lombok.Getter;
-import lombok.Setter;
+import jdk.nashorn.internal.objects.annotations.Constructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +14,8 @@ import java.util.List;
 @Table(name = "user_table")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
