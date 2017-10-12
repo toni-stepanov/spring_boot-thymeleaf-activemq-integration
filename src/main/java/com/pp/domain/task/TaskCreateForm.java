@@ -1,13 +1,14 @@
 package com.pp.domain.task;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * Created by astepanov
  */
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskCreateForm {
 
     private String title;

@@ -4,6 +4,7 @@ import com.gargoylesoftware.htmlunit.WebClient;
 import com.pp.controller.TaskController;
 import com.pp.controller.advice.CurrentUserControllerAdvice;
 import com.pp.domain.task.Task;
+import com.pp.domain.task.TaskCreateForm;
 import com.pp.domain.user.CurrentUser;
 import com.pp.domain.user.Role;
 import com.pp.domain.user.User;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -32,10 +34,14 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anyVararg;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
@@ -44,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(TaskController.class)
 @ActiveProfiles("test")
-public class TaskControllerIntegrationTest {
+public class TaskControllerTest {
 
 	@Autowired
     private WebApplicationContext context;
@@ -67,9 +73,15 @@ public class TaskControllerIntegrationTest {
     @MockBean
     private TaskService taskService;
 
+    @MockBean
+    private WebDataBinder dataBinder;
+
+    private TaskCreateForm createForm;
+
     @Before
     public void setUp() throws Exception {
         user = new User(1L, "test@test.com", "124214", Role.ADMIN, new ArrayList<Task>());
+        createForm = new TaskCreateForm("title", "dasc");
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(springSecurity())
             .build();
@@ -77,6 +89,7 @@ public class TaskControllerIntegrationTest {
         when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
+        doNothing().when(formValidator).validate(any(), any());
     }
 
     private Page<Task> createEmptyPage() {
@@ -107,6 +120,11 @@ public class TaskControllerIntegrationTest {
     @WithMockUser(username="demo@localhost",roles={"USER","ADMIN"})
     public void shouldNotBeErrorsForAthorizedUserForCallingTaskPage() throws Exception {
         mockMvc.perform(get("/tasks")).andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldBeErrorsForNonAthorizedUserForCallingCreateTask() throws Exception {
+        mockMvc.perform(post("/task/create", createForm)).andExpect(status().isUnauthorized());
     }
 
 }
