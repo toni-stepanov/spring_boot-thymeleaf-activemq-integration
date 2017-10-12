@@ -55,13 +55,13 @@ public class TaskController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/task/create", method = RequestMethod.GET)
+    @GetMapping(value = "/task/create")
     private ModelAndView getNewTask(){
         LOGGER.debug("Getting task create form");
         return new ModelAndView("newTask", "form", new TaskCreateForm());
     }
 
-    @RequestMapping(value = "/task/create", method = RequestMethod.POST)
+    @PostMapping(value = "/task/create")
     private String createNewTask(@Valid @ModelAttribute("form") TaskCreateForm form, BindingResult bindingResult){
         LOGGER.debug("Processing task create form={}, bindingResult={}", form, bindingResult);
         if (bindingResult.hasErrors()) {

@@ -35,20 +35,20 @@ public class UserController {
     }
 
     @PreAuthorize("@currentUserServiceImpl.canAccessUser(principal, #id)")
-    @RequestMapping("/user/{id}")
+    @GetMapping("/user/{id}")
     public ModelAndView getUserPage(@PathVariable Long id) {
         LOGGER.debug("Getting user page for user={}", id);
         return new ModelAndView("user", "user", userService.getUserById(id)
                 .orElseThrow(() -> new NoSuchElementException(String.format("User=%s not found", id))));
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.GET)
+    @GetMapping(value = "/signup")
     public ModelAndView getUserCreatePage() {
         LOGGER.debug("Getting user create form");
         return new ModelAndView("registration", "form", new UserCreateForm());
     }
 
-    @RequestMapping(value = "/signup", method = RequestMethod.POST)
+    @PostMapping(value = "/signup")
     public String handleUserCreateForm(@Valid @ModelAttribute("form") UserCreateForm form, BindingResult bindingResult) {
         LOGGER.debug("Processing user create form={}, bindingResult={}", form, bindingResult);
         if (bindingResult.hasErrors()) {
