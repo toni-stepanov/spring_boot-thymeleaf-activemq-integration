@@ -1,41 +1,16 @@
-package com.pp.domain;
+package com.pp.service;
 
-import com.pp.common.PageBuilder;
-import com.pp.controller.advice.CurrentUserControllerAdvice;
 import com.pp.domain.page.PageList;
 import com.pp.domain.page.PageWrapper;
-import com.pp.domain.task.Task;
-import com.pp.domain.task.TaskCreateForm;
-import com.pp.domain.user.Role;
-import com.pp.domain.user.User;
-import com.pp.domain.validator.TaskCreateFormValidator;
-import com.pp.service.TaskService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.notNull;
-import static org.mockito.Mockito.*;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by astepanov

@@ -45,12 +45,8 @@ public class TaskController {
                                         @RequestParam("page") Optional<Integer> number) {
         LOGGER.debug(number.isPresent() ? "getting task page with number : " + number : "getting first task page");
         final ModelAndView modelAndView = new ModelAndView("tasks");
-        final Page<Task> page = taskService.findAllPageable(new PageRequest((new PageNumber(number))
-                .evalPageNumber(number), pageSize.orElse(BUTTONS_TO_SHOW)));
-        final PageWrapper<Task> pageWrapper = new PageWrapper<>(page);
-        final PageList<Task> pageList = new PageList<>(pageWrapper, BUTTONS_TO_SHOW);
-        pageList.initializeBounds();
-        modelAndView.addObject("page", pageWrapper);
+        PageList<Task> pageList = taskService.getPageList(number, BUTTONS_TO_SHOW, pageSize);
+        modelAndView.addObject("page", pageList.getCurrentPage());
         modelAndView.addObject("pageList", pageList);
         return modelAndView;
     }

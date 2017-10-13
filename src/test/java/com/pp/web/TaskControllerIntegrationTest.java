@@ -6,6 +6,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.pp.common.PageBuilder;
 import com.pp.controller.TaskController;
 import com.pp.controller.advice.CurrentUserControllerAdvice;
+import com.pp.domain.page.PageList;
+import com.pp.domain.page.PageWrapper;
 import com.pp.domain.task.Task;
 import com.pp.domain.task.TaskCreateForm;
 import com.pp.domain.user.CurrentUser;
@@ -81,8 +83,11 @@ public class TaskControllerIntegrationTest {
             .apply(springSecurity())
             .build();
         Task task = createTask();
-        when(taskService.findAllPageable(any())).thenReturn((new PageBuilder<Task>())
-                .createOneElemPage(task, PAGE_NUMBER, PAGE_SIZE));
+        Page<Task> oneElemPage = (new PageBuilder<Task>())
+                .createOneElemPage(task, PAGE_NUMBER, PAGE_SIZE);
+        PageWrapper<Task> taskPageWrapper = new PageWrapper<>(oneElemPage);
+        when(taskService.findAllPageable(any())).thenReturn(null);
+        when(taskService.getPageList(any(), any(), any())).thenReturn(new PageList<Task>(taskPageWrapper, 5));
         when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
