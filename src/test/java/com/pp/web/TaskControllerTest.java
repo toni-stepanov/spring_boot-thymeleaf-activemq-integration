@@ -1,6 +1,8 @@
 package com.pp.web;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomNode;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.pp.controller.TaskController;
 import com.pp.controller.advice.CurrentUserControllerAdvice;
 import com.pp.domain.task.Task;
@@ -31,7 +33,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -43,6 +47,8 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * Created by astepanov
@@ -120,6 +126,16 @@ public class TaskControllerTest {
     @WithMockUser(username="demo@localhost",roles={"USER","ADMIN"})
     public void shouldNotBeErrorsForAthorizedUserForCallingTaskPage() throws Exception {
         mockMvc.perform(get("/tasks")).andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser(username="demo@localhost",roles={"USER","ADMIN"})
+    public void taskPageShouldContentsRightTaskItems() throws Exception {
+        HtmlPage page = webClient.getPage("http://pp.com/tasks");
+        List<String> taskParam = page.getElementsByTagName("td")
+                .stream().map(DomNode::asText).collect(toList());
+        assertThat(taskParam.get(1), is("12"));
+        assertThat(taskParam.get(2), is("test@test.com"));
     }
 
     @Test
