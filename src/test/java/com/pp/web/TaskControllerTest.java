@@ -36,19 +36,15 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyList;
-import static org.mockito.Matchers.anyVararg;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
 
 /**
  * Created by astepanov
@@ -63,10 +59,7 @@ public class TaskControllerTest {
     private MockMvc mockMvc;
     private WebClient webClient;
     private final int PAGE_NUMBER = 1;
-    private final String PAGE_NUMBER_STRING = "1";
     private final int PAGE_SIZE = 5;
-    private final String PAGE_SIZE_STRING = "5";
-    private final String SEARCH_TERM = "itl";
     private Pageable pageRequest;
     private User user;
 
@@ -75,12 +68,6 @@ public class TaskControllerTest {
 
     @MockBean
     private CurrentUserControllerAdvice currentUserControllerAdvice;
-
-    @MockBean
-    private TaskService taskService;
-
-    @MockBean
-    private WebDataBinder dataBinder;
 
     private TaskCreateForm createForm;
 
