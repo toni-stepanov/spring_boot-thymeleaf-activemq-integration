@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
-public class HomeControllerTest {
+public class HomeControllerSystemTest {
 
 	@Autowired
 	private WebApplicationContext context;

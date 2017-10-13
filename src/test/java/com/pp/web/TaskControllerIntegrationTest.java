@@ -52,7 +52,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(TaskController.class)
 @ActiveProfiles("test")
-public class TaskControllerTest {
+public class TaskControllerIntegrationTest {
 
 	@Autowired
     private WebApplicationContext context;
