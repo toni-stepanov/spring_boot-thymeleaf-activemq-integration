@@ -36,11 +36,13 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -86,8 +88,8 @@ public class TaskControllerIntegrationTest {
         Page<Task> oneElemPage = (new PageBuilder<Task>())
                 .createOneElemPage(task, PAGE_NUMBER, PAGE_SIZE);
         PageWrapper<Task> taskPageWrapper = new PageWrapper<>(oneElemPage);
-        when(taskService.findAllPageable(any())).thenReturn(null);
-        when(taskService.getPageList(any(), any(), any())).thenReturn(new PageList<Task>(taskPageWrapper, 5));
+        when(taskService.getPageList(any(), anyInt(), any()))
+                .thenReturn(new PageList<Task>(taskPageWrapper, 5));
         when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
