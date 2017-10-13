@@ -69,6 +69,9 @@ public class TaskControllerIntegrationTest {
     @MockBean
     private CurrentUserControllerAdvice currentUserControllerAdvice;
 
+    @MockBean
+    private TaskService taskService;
+
     private TaskCreateForm createForm;
 
     @Before
