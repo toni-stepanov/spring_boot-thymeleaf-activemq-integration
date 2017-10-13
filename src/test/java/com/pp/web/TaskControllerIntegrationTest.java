@@ -28,7 +28,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.htmlunit.MockMvcWebClientBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
@@ -81,14 +80,14 @@ public class TaskControllerIntegrationTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(springSecurity())
             .build();
-        when(taskService.findAllPageable(any())).thenReturn(createEmptyPage());
+        when(taskService.findAllPageable(any())).thenReturn(createPage());
         when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
         doNothing().when(formValidator).validate(any(), any());
     }
 
-    private Page<Task> createEmptyPage() {
+    private Page<Task> createPage() {
         Task task = new Task();
         task.setTitle("12");
         task.setUser(user);
