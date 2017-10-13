@@ -3,6 +3,7 @@ package com.pp.web;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.pp.common.PageBuilder;
 import com.pp.controller.TaskController;
 import com.pp.controller.advice.CurrentUserControllerAdvice;
 import com.pp.domain.task.Task;
@@ -75,30 +76,25 @@ public class TaskControllerIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        user = new User(1L, "test@test.com", "124214", Role.ADMIN, new ArrayList<Task>());
         createForm = new TaskCreateForm("title", "dasc");
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(springSecurity())
             .build();
-        when(taskService.findAllPageable(any())).thenReturn(createPage());
+        Task task = createTask();
+        when(taskService.findAllPageable(any())).thenReturn((new PageBuilder<Task>())
+                .createOneElemPage(task, PAGE_NUMBER, PAGE_SIZE));
         when(currentUserControllerAdvice.getCurrentUser(any())).thenReturn(createCurrentUser());
         webClient = MockMvcWebClientBuilder.mockMvcSetup(mockMvc)
                 .useMockMvcForHosts("pp.com").build();
         doNothing().when(formValidator).validate(any(), any());
     }
 
-    private Page<Task> createPage() {
+    private Task createTask() {
+        user = new User(1L, "test@test.com", "124214", Role.ADMIN, new ArrayList<Task>());
         Task task = new Task();
         task.setTitle("12");
         task.setUser(user);
-        Sort sort = new Sort(Sort.Direction.ASC, "title");
-        pageRequest = new PageRequest(PAGE_NUMBER, PAGE_SIZE, sort);
-        Page<Task> emptyPage = new PageBuilder<Task>()
-                .elements(Arrays.asList(task))
-                .pageRequest(pageRequest)
-                .totalElements(0)
-                .build();
-        return emptyPage;
+        return task;
     }
 
     private CurrentUser createCurrentUser() {
