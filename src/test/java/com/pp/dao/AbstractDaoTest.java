@@ -31,12 +31,4 @@ public abstract class AbstractDaoTest<D> {
 
     @Autowired
     protected D dao;
-
-    protected long addRecordToDatabase(String table, Map<String, Object> fields) {
-        Object[] params = Stream.concat(Stream.of(++id), fields.values().stream()).toArray();
-        jdbcTemplate.update("INSERT INTO " + table +
-                " (id, " + String.join(", ", fields.keySet()) +
-                ") VALUES (?" + StringUtils.repeat(", ?", fields.size()) + ")", params);
-        return id;
-    }
 }
